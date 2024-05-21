@@ -94,8 +94,11 @@ function App() {
       objectsMap.push({
         object,
         originalPosition: object.position,
-        animateLimit: 0.01,
-        animateZLimit: 0.3,
+        animateXLimit: 0.01,
+        animateYLimit: 0.025,
+        animateZLimit: 0.002,
+        rotateZLimit: 0.3,
+        animateTime: 3,
       });
     });
 
@@ -113,13 +116,38 @@ function App() {
       objectsMap.push({
         object,
         originalPosition: object.position,
-        animateLimit: 0.015,
-        animateZLimit: 0.08,
+        animateXLimit: 0.015,
+        animateYLimit: 0.02,
+        animateZLimit: -0.008,
+        rotateZLimit: -0.08,
+        animateTime: 5,
+      });
+    });
+
+    loadModel(Models.NorthStudio).then(object => {
+      object.position.set(1.5, 39, 2);
+      object.scale.set(0.02, 0.08, 0.02);
+      object.traverse(node => {
+        node.castShadow = true;
+        node.receiveShadow = true;
+        if (node instanceof THREE.Mesh) {
+          node.material.color.setHex(0xdddddd);
+        }
+      });
+      scene.add(object);
+      objectsMap.push({
+        object,
+        originalPosition: object.position,
+        animateXLimit: 0.015,
+        animateYLimit: 0.02,
+        animateZLimit: -0.01,
+        rotateZLimit: -0.2,
+        animateTime: 3,
       });
     });
 
     const clock = new THREE.Clock();
-    const raycaster = new THREE.Raycaster();
+    const rayCaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
 
     const onMouseMove = (event: any) => {
@@ -135,13 +163,14 @@ function App() {
         const model = item.object;
         const originalPosition = item.originalPosition;
         // Move model slightly based on original position
-        model.position.y = originalPosition.y + Math.sin(time * 10) * item.animateLimit; // Up and down (reduced)
-        model.position.x = originalPosition.x + Math.sin(time * 5) * item.animateLimit; // Left and right (reduced)
-        model.rotation.z = Math.sin(time * 5) * item.animateZLimit; // Slight rotation (reduced)
+        model.position.y = originalPosition.y + Math.sin(time * item.animateTime) * item.animateYLimit; // Up and down (reduced)
+        model.position.x = originalPosition.x + Math.sin(time * item.animateTime) * item.animateXLimit; // Left and right (reduced)
+        model.position.z = originalPosition.z + Math.sin(time * item.animateTime) * item.animateZLimit; // Left and right (reduced)
+        model.rotation.z = Math.sin(time * item.animateTime) * item.rotateZLimit; // Slight rotation (reduced)
       }
 
-      raycaster.setFromCamera(mouse, camera);
-      const intersects = raycaster.intersectObjects(objectsMap.map(item => item.object), true);
+      rayCaster.setFromCamera(mouse, camera);
+      const intersects = rayCaster.intersectObjects(objectsMap.map(item => item.object), true);
 
       if (intersects.length > 0) {
         if (INTERSECTED != intersects[0].object) {
