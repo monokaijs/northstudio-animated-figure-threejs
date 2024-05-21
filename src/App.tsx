@@ -154,7 +154,7 @@ function App() {
       mouse.x = (event.clientX / CANVAS_WIDTH) * 2 - 1;
       mouse.y = -(event.clientY / CANVAS_HEIGHT) * 2 + 1;
       camera.position.y = 68 - (event.clientY / CANVAS_HEIGHT) * 2;
-      camera.position.x = 12 - (event.clientY / CANVAS_WIDTH);
+      camera.position.x = 12 - (event.clientX / CANVAS_WIDTH);
       camera.lookAt(12, camera.position.y, 8);
     };
     window.addEventListener('mousemove', onMouseMove, false);
