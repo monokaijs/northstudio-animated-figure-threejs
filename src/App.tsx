@@ -151,10 +151,11 @@ function App() {
     const mouse = new THREE.Vector2();
 
     const onMouseMove = (event: any) => {
-      mouse.x = (event.clientX / CANVAS_WIDTH) * 2 - 1;
-      mouse.y = -(event.clientY / CANVAS_HEIGHT) * 2 + 1;
-      camera.position.y = 68 - (event.clientY / CANVAS_HEIGHT) * 2;
-      camera.position.x = 12 - (event.clientX / CANVAS_WIDTH);
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      camera.position.y = 68 - ((event.clientY - rect.top) / rect.height) * 2;
+      camera.position.x = 12 - ((event.clientX - rect.left) / rect.width);
       camera.lookAt(12, camera.position.y, 8);
     };
     window.addEventListener('mousemove', onMouseMove, false);
